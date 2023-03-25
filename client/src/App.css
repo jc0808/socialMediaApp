@@ -1,4 +1,4 @@
-.App {
+/* .App {
   text-align: center;
 }
 
@@ -32,7 +32,42 @@
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }
+} */
+
+
+body {
+  background-color: rgb(139, 139, 249);
 }
+
+/* .chatBoder {
+  border: 2px solid;
+  height: auto;
+  width: auto;
+
+} */
+
+.header {
+  background-color: rgb(60, 60, 243);
+  color: white;
+}
+
+.circle {
+  border: 2px solid red;
+  height: 100px;
+  width: 100px;
+  border-radius: 50%;
+  border-style: groove;
+  /* background-image: url("./profilePic.png"); */
+  background-position: center;
+  background-size: contain;
+  background-color: whitesmoke;
+}
+
+/* .circle img {
+  image-rendering: optimizeQuality;
+  width: 80px;
+} */

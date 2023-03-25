@@ -1,24 +1,23 @@
-import logo from './logo.svg';
+
 import './App.css';
+import { Container, Col, Row, Card, Button } from "react-bootstrap";
+import NavBar from './NavBar';
+import Home from './Home';
+import Profile from './Profile';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <div>
+      <NavBar />
+
+      {/* <Row style={{ textAlign: "center" }} className="mt-3"><h3>Your Feed</h3></Row> */}
+      {/* className='d-flex justify-content-center' */}
+
+      {/* <Home /> */}
+
+      <Profile />
+
+    </div >
   );
 }
 
