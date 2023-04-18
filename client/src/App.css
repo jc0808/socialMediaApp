@@ -71,3 +71,11 @@ body {
   image-rendering: optimizeQuality;
   width: 80px;
 } */
+
+#profileButtons {
+  cursor: pointer;
+}
+
+#profileButtons:hover {
+  color: orange;
+}
