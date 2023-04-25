@@ -1,14 +1,18 @@
 import { useState } from "react";
-import { Col, Container, Row, Card, Button } from "react-bootstrap";
-import { Routes } from "react-router-dom";
+import { Col, Container, Row } from "react-bootstrap";
+
 import Friends from "./Friends";
 import Posts from "./Posts";
 
 import profilePic from "./profilePic.png";
 
-export default function profile() {
+export default function Profile() {
 
+    const [changeView, setChangeView] = useState("posts");
 
+    function changeV(v) {
+        setChangeView(v)
+    }
 
 
     return (
@@ -29,21 +33,31 @@ export default function profile() {
             <Container className="mt-3 text-center">
                 <Row>
                     <Col style={{ backgroundColor: "lightGreen" }}>
-                        <h2 id="profileButtons" >My Posts</h2>
+                        <h2 id="profileButtons" onClick={() => changeV("posts")}>My Posts (5) </h2>
                     </Col>
                     <Col style={{ backgroundColor: "lightGreen" }}>
-                        <h2 id="profileButtons" >My Photos</h2>
+                        <h2 id="profileButtons" onClick={() => changeV("photos")}>My Photos (10) </h2>
                     </Col>
 
                     <Col style={{ backgroundColor: "lightGreen" }}>
-                        <h2 id="profileButtons"  >My Friends</h2>
+                        <h2 id="profileButtons" onClick={() => changeV("friends")}>My Friends (20) </h2>
                     </Col>
                 </Row>
 
 
             </Container>
 
+            <Container>
 
+                <Row className="Prow">
+
+                    {changeView === "posts" ? <Posts /> : null}
+                    {changeView === "photos" ? "photos" : null}
+                    {changeView === "friends" ? <Friends /> : null}
+
+                </Row>
+
+            </Container>
 
             {/* <h2 className="text-center mt-5">Your posts</h2>
             <Container className="d-flex justify-content-center"> */}

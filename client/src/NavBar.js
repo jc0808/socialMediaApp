@@ -5,7 +5,7 @@ export default function NavBar() {
         <div>
             <Navbar bg="light" expand="lg">
                 <Container fluid>
-                    <Navbar.Brand href="#">Navbar scroll</Navbar.Brand>
+                    <Navbar.Brand href="#">JC Media</Navbar.Brand>
                     <Navbar.Toggle aria-controls="navbarScroll" />
                     <Navbar.Collapse id="navbarScroll">
                         <Nav
@@ -16,7 +16,7 @@ export default function NavBar() {
                             <Nav.Link href="/">Home</Nav.Link>
                             <Nav.Link href="/myProfile">Profile</Nav.Link>
                             <NavDropdown title="Settings" id="navbarScrollingDropdown">
-                                <NavDropdown.Item href="#action3">Account</NavDropdown.Item>
+                                <NavDropdown.Item href="/account">Account</NavDropdown.Item>
                                 <NavDropdown.Item href="#action4">
                                     Log Out
                                 </NavDropdown.Item>

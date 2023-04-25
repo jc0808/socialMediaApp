@@ -1,10 +1,11 @@
 
 import './App.css';
-import { Container, Col, Row, Card, Button } from "react-bootstrap";
+// import { Container, Col, Row, Card, Button } from "react-bootstrap";
 import NavBar from './NavBar';
 import Home from './Home';
 import Profile from './Profile';
 import { Routes, Route } from "react-router-dom";
+import Account from './Account';
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/myProfile" element={<Profile />} />
+        <Route path="/account" element={<Account />} />
       </Routes>
 
     </>
