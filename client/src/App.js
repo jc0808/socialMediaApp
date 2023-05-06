@@ -6,6 +6,7 @@ import Home from './Home';
 import Profile from './Profile';
 import { Routes, Route } from "react-router-dom";
 import Account from './Account';
+import Login from './Login';
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/myProfile" element={<Profile />} />
         <Route path="/account" element={<Account />} />
+        {/* <Route path="/login" element={<Login />} /> */}
       </Routes>
 
     </>

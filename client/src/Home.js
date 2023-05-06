@@ -1,15 +1,60 @@
 import { useState } from "react";
 import { Container, Col, Row, Card, Button } from "react-bootstrap";
+import Chat from "./Chat";
+import Chats from "./Chats";
 import PostCard from "./PostCard";
+
 
 export default function Home() {
 
     const [post, setPost] = useState(false);
+    const [allPosts, setAllPosts] = useState([]);
+    const [image, setImage] = useState('');
+    const [content, setContent] = useState('');
 
 
     function createPost() {
         setPost((post) => !post)
     }
+
+    const convert2base64 = file => {
+        const reader = new FileReader();
+
+        reader.onloadend = () => {
+            setImage(reader.result.toString());
+        };
+
+        reader.readAsDataURL(file)
+
+    }
+
+    function handleContent(e) {
+        setContent(e.target.value);
+    }
+
+    function handleSubmitForm(e) {
+        e.preventDefault();
+
+        // convert2base64(e.target['imageUpload'].files[0])
+
+        const newPost = {
+            id: 0,
+            profile_id: 0,
+            content: content,
+            image: image
+        }
+
+        setAllPosts([newPost, ...allPosts]);
+        setImage('')
+
+        console.log(allPosts)
+    }
+
+    const displayPosts = allPosts.map(post => {
+        return (
+            <PostCard content={post.content} image={post.image} />
+        )
+    })
     return (
         <div>
             <Container id='homeContainer'>
@@ -35,7 +80,13 @@ export default function Home() {
                             {post ? <Card style={{ width: '25rem' }} className="p-3 align-items-center">
                                 <Card.Title className='text-center'> Create Post</Card.Title>
                                 <Card.Text>
-                                    <input type="text" ></input>
+                                    <form onSubmit={handleSubmitForm}>
+                                        <label htmlFor="content">Content: </label>
+                                        <input id="content" type="text" onChange={handleContent}></input>
+                                        <input id="imageUpload" type="file" onChange={(e) => convert2base64(e.target.files[0])} />
+                                        <button className="me-2" variant="primary"> Post</button>
+                                    </form>
+
                                 </Card.Text>
                                 {/* <Card.Img variant="top" src="https://media.istockphoto.com/id/980239992/vector/happy-handsome-man-showing-thumbs-up-concept-illustration-in-cartoon-style.jpg?s=612x612&w=0&k=20&c=1ikVDLkafPxGOLqq4gtIs4HQFBQpdjuiaSchIoqW_M4=" /> */}
 
@@ -44,7 +95,7 @@ export default function Home() {
 
                                         {/* <Card.Text style={{ color: "grey" }}>0 comments</Card.Text> */}
                                     </div>
-                                    <Button className="me-2" variant="primary"> Post</Button>
+
                                 </Card.Body>
                             </Card> : null}
                         </Container>
@@ -86,7 +137,7 @@ export default function Home() {
 
                         {/* <Container fluid> */}
 
-                        <PostCard showImage="d-none" />
+                        {/* <PostCard showImage="d-none" />
                         <PostCard />
                         <PostCard />
                         <PostCard />
@@ -94,7 +145,9 @@ export default function Home() {
                         <PostCard showImage="d-none" />
                         <PostCard showImage="d-none" />
                         <PostCard showImage="d-none" />
-                        <PostCard showImage="d-none" />
+                        <PostCard showImage="d-none" /> */}
+
+                        {displayPosts}
 
 
 
@@ -114,8 +167,7 @@ export default function Home() {
 
 
                         <Container>
-
-                            <div className='chatBoder'>
+                            <div className='chatBorder'>
 
                                 {/* <Card className='border border-3 border-success p-2'>
                                     <Card.Title>Mark G.</Card.Title>
@@ -127,10 +179,29 @@ export default function Home() {
                                     <Card.Body>Hola Joshua!</Card.Body>
                                 </Card> */}
 
+                                <Chats />
+                                <Chats />
+                                <Chats />
+                                <Chats />
+                                <Chats />
+                                <Chats />
+                                <Chats />
+                                <Chats />
+                                <Chats />
+                                <Chats />
+
 
                             </div>
 
-                            <div className="chat">
+
+
+                            {/* <div className="mt-5">
+                                <Chat />
+                            </div> */}
+
+
+
+                            {/* <div className="chat">
                                 <div className="messages">
                                     <div className="right">
                                         <label>Hello Joshua!</label>
@@ -148,7 +219,7 @@ export default function Home() {
                                     <input type="text" placeholder="Send a Message ✍️..." />
                                 </div>
 
-                            </div>
+                            </div> */}
 
                         </Container>
                     </Col>
