@@ -1,6 +1,33 @@
-import { Container, Navbar, Button, Form, Nav, NavDropdown } from "react-bootstrap";
+import { Container, Navbar, Button, Form, Nav, NavDropdown, Dropdown } from "react-bootstrap";
+import { useSelector } from "react-redux";
+import { selectMyProfileInfo } from "./Store";
+import ProfileCard from "./ProfileCard";
+import { useState } from "react";
 
-export default function NavBar() {
+export default function NavBar({ profiles, profileView }) {
+
+    const myProfileInfo = useSelector(selectMyProfileInfo);
+
+    const [searchTerm, setSearchTerm] = useState('');
+
+
+
+    const handleInput = e => {
+        setSearchTerm(e.target.value);
+    }
+
+    const displayCards = profiles.filter(p => `${p.firstName.toLowerCase()} ${p.lastName.toLowerCase()}`.includes(searchTerm)).map(profile => {
+        return (
+
+            <Dropdown.Item>
+                <ProfileCard key={profile.id} id={profile.id} firstName={profile.firstName} lastName={profile.lastName} image={profile.image} profileView={profileView} />
+            </Dropdown.Item>
+
+        )
+    });
+
+
+
     return (
         <div>
             <Navbar bg="light" expand="lg">
@@ -26,21 +53,40 @@ export default function NavBar() {
                                 </NavDropdown.Item>
                             </NavDropdown>
                             <Nav.Link href="#" disabled>
-                                Hello, Joshua!
+                                Hello, {`${myProfileInfo.firstName}`}!
                             </Nav.Link>
                         </Nav>
-                        <Form className="d-flex">
+
+                        <Form className="d-flex" >
                             <Form.Control
                                 type="search"
                                 placeholder="Search"
                                 className="me-2"
                                 aria-label="Search"
+                                onChange={handleInput}
                             />
-                            <Button variant="outline-success">Search</Button>
+
+                            {/* <Button variant="outline-success">Search</Button> */}
+
                         </Form>
+
+                        {searchTerm === "" && !searchTerm ? null
+                            :
+                            <Dropdown show>
+                                <Dropdown.Menu align="end" className="me-5 mt-4" >
+
+                                    {searchTerm === "" && !searchTerm ? <Dropdown.Item>No Results</Dropdown.Item> : displayCards}
+
+                                </Dropdown.Menu>
+                            </Dropdown>
+                        }
+
                     </Navbar.Collapse>
                 </Container>
             </Navbar>
-        </div>
+
+            {/* <div className="results"></div> */}
+        </div >
+
     );
 }

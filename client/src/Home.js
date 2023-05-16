@@ -1,16 +1,34 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Container, Col, Row, Card, Button } from "react-bootstrap";
 import Chat from "./Chat";
 import Chats from "./Chats";
 import PostCard from "./PostCard";
 
+import { selectPosts } from './Store';
+import { useDispatch, useSelector } from "react-redux";
+
 
 export default function Home() {
 
     const [post, setPost] = useState(false);
-    const [allPosts, setAllPosts] = useState([]);
+    // const [allPosts, setAllPosts] = useState(useSelector(selectPosts));
     const [image, setImage] = useState('');
     const [content, setContent] = useState('');
+    const allPosts = useSelector(selectPosts);
+    const dispatch = useDispatch();
+
+
+    // useEffect(() => {
+    //     fetch(`/profiles/1`)
+    //         .then(r => r.json())
+    //         .then(data => setAllPosts(data))
+
+    //     // console.log(useSelector(selectPosts))
+
+
+
+
+    // }, [])
 
 
     function createPost() {
@@ -37,22 +55,31 @@ export default function Home() {
 
         // convert2base64(e.target['imageUpload'].files[0])
 
-        const newPost = {
-            id: 0,
-            profile_id: 0,
-            content: content,
-            image: image
+        // const newPost = {
+        //     id: 0,
+        //     profile_id: 0,
+        //     content: content,
+        //     image: image
+        // }
+
+        const addpost = {
+            type: 'addPost',
+            payload: {
+                content: content,
+                image: image
+            }
         }
 
-        setAllPosts([newPost, ...allPosts]);
+        dispatch(addpost);
+
         setImage('')
 
-        console.log(allPosts)
     }
 
     const displayPosts = allPosts.map(post => {
         return (
-            <PostCard content={post.content} image={post.image} />
+            <PostCard key={post.id} id={post.id} firstName={post.firstName} lastName={post.lastName} content={post.content} image={post.image}
+                comments={post.my_comments} likes={post.my_likes} dislikes={post.my_dislikes} profileId={post.profile_id} />
         )
     })
     return (
@@ -147,7 +174,7 @@ export default function Home() {
                         <PostCard showImage="d-none" />
                         <PostCard showImage="d-none" /> */}
 
-                        {displayPosts}
+                        {displayPosts ? displayPosts : null}
 
 
 

@@ -492,3 +492,117 @@ body {
   font-size: 14px;
   color: gray;
 }
+
+
+
+
+
+
+/* login */
+
+.credentialsPage {
+  display: flex;
+  justify-content: center;
+  position: static;
+  margin: 15%;
+}
+
+.loginBox {
+  border: solid 2px;
+  width: 430px;
+  height: 430px;
+  padding: 10px;
+  text-align: center;
+  font-weight: bolder;
+
+}
+
+.signUpBox {
+  border: solid 2px;
+  width: 400px;
+  height: 480px;
+  padding: 10px;
+  text-align: center;
+  font-weight: bolder;
+}
+
+.resetPasswordBox {
+  border: solid 2px;
+  width: 400px;
+  height: 480px;
+  padding: 10px;
+  text-align: center;
+  font-weight: bolder;
+}
+
+.signUpBox .goBackButton {
+  float: left;
+  font-size: 15px;
+  color: blue;
+  cursor: pointer;
+
+}
+
+.boxCredentials h3 {
+  font-size: 20px;
+}
+
+.form {
+  text-align: center;
+  margin: 10%;
+  display: inline-block;
+
+}
+
+.form #username,
+#password,
+#firstname,
+#lastname,
+#address,
+#confirmPassword {
+  border-radius: 20px;
+  padding: 10px;
+  color: purple;
+}
+
+.form .loginButton {
+  margin-top: 20px;
+}
+
+.form .loginButton button {
+  font-size: 19px;
+  border-radius: 20px;
+  padding: 10px;
+}
+
+.form .loginButton button:hover {
+  color: blueviolet;
+  border-color: rgb(153, 79, 221);
+}
+
+
+.boxCredentials .lowerBox div {
+  padding: 5px;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.boxCredentials .lowerBox div:hover {
+  color: purple;
+}
+
+.follow {
+  margin-bottom: 30px;
+}
+
+.followButton {
+  background-color: rgb(32, 134, 197);
+  color: whitesmoke;
+  border-radius: 15%;
+  text-decoration: none;
+  width: 80px;
+  padding: 8px;
+
+
+}

@@ -5,43 +5,97 @@ import Friends from "./Friends";
 import Posts from "./Posts";
 
 import profilePic from "./profilePic.png";
-import { useSelector } from "react-redux";
-import { selectMyProfileInfo } from "./Store";
+import { useSelector, useDispatch } from "react-redux";
+import { selectCurrentUserID, selectMyProfileInfo, selectUserProfiles } from "./Store";
 
-export default function Profile() {
+export default function Profile2({ id }) {
+
+    const dispatch = useDispatch();
 
     const [changeView, setChangeView] = useState("posts");
 
+    const myProfileInfo = useSelector(selectMyProfileInfo);
+    const userProfiles = useSelector(selectUserProfiles);
 
-    const profileInfo = useSelector(selectMyProfileInfo);
+    const profileInfo = userProfiles.find(user => user.id === id);
 
-    function changeV(v) {
-        setChangeView(v)
-    }
 
-    console.log(profileInfo)
+
+
+
+    const found = profileInfo.followers.find(follower => follower.profile_id === myProfileInfo.id);
+    const follow = found ? true : false;
+
+    console.log(profileInfo.followers)
 
     const followers = profileInfo.followers.map(follower => {
 
         return {
             id: follower.id,
             profile_id: follower.profile_id,
-            firstName: follower.followers_profiles.firstName,
-            lastName: follower.followers_profiles.lastName
+            firstName: follower.followers_profile.firstName,
+            lastName: follower.followers_profile.lastName
         }
     })
+
+
+    // console.log(profileInfo)
+    // console.log(myProfileInfo)
+    // console.log(found)
+
+
+    function changeV(v) {
+        setChangeView(v)
+    }
+
+    const handleFollow = () => {
+
+        const followProfile = {
+            type: 'followProfile',
+            payload: {
+                id: profileInfo.id
+            }
+        };
+
+        dispatch(followProfile)
+
+    }
+
+    const handleRemoveFollower = () => {
+        const removeFollower = {
+            type: 'removeFollower',
+            payload: {
+                id: profileInfo.id
+            }
+        };
+
+        dispatch(removeFollower)
+
+    }
+
 
     return (
         <Container>
 
             <Container className="header border border-3">
-                <h1 className="text-center">{`${profileInfo.firstName} ${profileInfo.lastName}`}</h1>
+                <h1 className="text-center">{`${profileInfo?.firstName} ${profileInfo?.lastName}`}</h1>
 
                 <Container className="d-flex justify-content-center">
                     <div className="circle" style={{ backgroundImage: `url(${profilePic})` }}></div>
                 </Container>
-                <h3>Location: {profileInfo.location}</h3>
-                <h3>Age: {profileInfo.age}</h3>
+                <h3>Location: {profileInfo?.location}</h3>
+                <h3>Age: {profileInfo?.age}</h3>
+
+                <Container className="d-flex justify-content-around follow">
+                    {follow ?
+                        <>
+                            <h3>Following ✅</h3>
+                            <button onClick={handleRemoveFollower}>Remove Follower</button>
+                        </>
+                        :
+
+                        <button className="followButton" onClick={handleFollow}>Follow</button>}
+                </Container>
 
             </Container>
 
@@ -49,14 +103,14 @@ export default function Profile() {
             <Container className="mt-3 text-center">
                 <Row>
                     <Col style={{ backgroundColor: "lightGreen" }}>
-                        <h2 id="profileButtons" onClick={() => changeV("posts")}>My Posts {`(${profileInfo.posts.length})`} </h2>
+                        <h2 id="profileButtons" onClick={() => changeV("posts")}>Posts {`(${profileInfo?.posts?.length})`} </h2>
                     </Col>
                     <Col style={{ backgroundColor: "lightGreen" }}>
-                        <h2 id="profileButtons" onClick={() => changeV("photos")}>My Photos (10) </h2>
+                        <h2 id="profileButtons" onClick={() => changeV("photos")}>Photos (10) </h2>
                     </Col>
 
                     <Col style={{ backgroundColor: "lightGreen" }}>
-                        <h2 id="profileButtons" onClick={() => changeV("friends")}>My Followers {`(${profileInfo.followers.length})`} </h2>
+                        <h2 id="profileButtons" onClick={() => changeV("friends")}>Followers {`(${profileInfo?.followers?.length})`} </h2>
                     </Col>
                 </Row>
 
@@ -67,9 +121,9 @@ export default function Profile() {
 
                 <Row className="Prow">
 
-                    {changeView === "posts" ? <Posts profileInfo={profileInfo} /> : null}
+                    {changeView === "posts" ? <Posts profileInfo={profileInfo} myProfileInfo={myProfileInfo} /> : null}
                     {changeView === "photos" ? "photos" : null}
-                    {changeView === "friends" ? <Friends profileInfo={profileInfo} followers={followers} /> : null}
+                    {changeView === "friends" ? <Friends followers={followers} profileInfo={profileInfo} /> : null}
 
                 </Row>
 

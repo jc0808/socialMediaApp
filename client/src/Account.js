@@ -1,17 +1,22 @@
 import { useState } from "react";
 import { Container, Row } from "react-bootstrap";
+import { useDispatch, useSelector } from "react-redux";
+import { selectMyProfileInfo } from "./Store";
 
 export default function Account() {
 
+    const myProfileInfo = useSelector(selectMyProfileInfo);
+
     const [currentView, setCurrentView] = useState(0);
-    const [firstName, setFirstName] = useState("Joshua");
-    const [lastName, setLastName] = useState("Campos");
-    const [location, setLocation] = useState("USA");
+    const [firstName, setFirstName] = useState(myProfileInfo.firstName);
+    const [lastName, setLastName] = useState(myProfileInfo.lastName);
+    const [location, setLocation] = useState(myProfileInfo.location);
     const [password, setPassword] = useState(null);
     const [confirmPassword, setConfirmPassword] = useState(null);
     const [showError, setShowError] = useState(false);
     const [messageSuccessfull, setMessageSuccesfull] = useState(false);
     const [change, setChange] = useState(true);
+    const dispatch = useDispatch();
 
     function changeView(view) {
         setCurrentView(view);
@@ -49,6 +54,21 @@ export default function Account() {
     function handleConfirmP(e) {
         setConfirmPassword(e.target.value);
     }
+
+    const handleChangeInfo = e => {
+        e.preventDefault()
+
+        const changeInfo = {
+            type: 'updateMyProfileInfo',
+            payload: {
+                firstName: firstName,
+                lastName: lastName,
+                location: location
+            }
+        };
+
+        dispatch(changeInfo);
+    }
     function cancel() {
         setPassword(null)
         setConfirmPassword(null)
@@ -85,14 +105,16 @@ export default function Account() {
                             :
                             <div className="info">
 
-                                <label>First Name:</label>
-                                <input type="text" onChange={changeFirstName} placeholder={firstName} />
-                                <label>Last Name:</label>
-                                <input type="text" onChange={changeLastName} placeholder={lastName} />
-                                <label>Location</label>
-                                <input type="text" onChange={changeLocation} placeholder={location} />
+                                <form onSubmit={handleChangeInfo}>
+                                    <label>First Name:</label>
+                                    <input type="text" onChange={changeFirstName} placeholder={firstName} />
+                                    <label>Last Name:</label>
+                                    <input type="text" onChange={changeLastName} placeholder={lastName} />
+                                    <label>Location</label>
+                                    <input type="text" onChange={changeLocation} placeholder={location} />
 
-                                <button onClick={() => setChange((change) => !change)}>Done</button>
+                                    <button onClick={() => setChange((change) => !change)}>Done</button>
+                                </form>
                             </div>}
 
 

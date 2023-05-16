@@ -1,16 +1,8 @@
-class UsersController < ApplicationController
+class AuthenticationsController < ApplicationController
 
     wrap_parameters format: []
 
-    skip_before_action :authorized, only: [:index]
-
-    def index
-    render json: User.all, status: :ok
-    end
-
-    def show
-        render json: User.find(params[:id])
-    end
+    # skip_before_action :authorized, only: [:create, :update]
 
     # def create
     #     adopter = Adopter.create!(adopter_params)
@@ -21,15 +13,29 @@ class UsersController < ApplicationController
     
     # end
 
+    def show
+        user = User.find(session[:user_id]).profile
+        render json: user
+    end
+
     # def update
     #     userCredential = Credential.find(reset_password_params[:id])
     #     userCredential.update!(password: reset_password_params[:password])
     # end
 
-    # def destroy
-    #     user = Adopter.find(params[:id]).destroy
-    #     head :no_content
-    # end
 
 
+    private
+
+    def adopter_params
+        params.permit(:firstName, :lastName)
+    end
+
+    def credential_params
+        params[:credentials].permit(:username, :password)
+    end
+
+    def reset_password_params
+        params.permit(:id, :password)
+    end
 end
