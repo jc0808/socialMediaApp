@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
-import { Container, Col, Row, Card, Button } from "react-bootstrap";
+import { Container, Col, Row, Card, Button, Dropdown } from "react-bootstrap";
 import Chat from "./Chat";
 import Chats from "./Chats";
 import PostCard from "./PostCard";
 
-import { selectPosts } from './Store';
+import { currentUser, selectCurrentUserID, selectPosts } from './Store';
 import { useDispatch, useSelector } from "react-redux";
+
+const ws = new WebSocket("ws://localhost:3000/cable")
 
 
 export default function Home() {
@@ -17,18 +19,69 @@ export default function Home() {
     const allPosts = useSelector(selectPosts);
     const dispatch = useDispatch();
 
+    const [chats, setChats] = useState([]);
 
-    // useEffect(() => {
-    //     fetch(`/profiles/1`)
-    //         .then(r => r.json())
-    //         .then(data => setAllPosts(data))
+    const [guid, setGuid] = useState("");
 
-    //     // console.log(useSelector(selectPosts))
+    const [newMessage, setNewMessage] = useState(null);
+
+    const currentUserId = useSelector(selectCurrentUserID);
+
+    const [chat, setChat] = useState({
+        display: false,
+        id: null,
+        messages: []
+    });
+
+    ws.onopen = () => {
+        console.log("Connected to websocket server");
+        setGuid(Math.random().toString(36).substring(2, 15));
+
+        ws.send(
+            JSON.stringify({
+                command: "subscribe",
+                identifier: JSON.stringify({
+                    id: guid,
+                    channel: "MessagesChannel"
+                })
+            })
+        )
+    }
+
+    ws.onmessage = (e) => {
+        const data = JSON.parse(e.data)
+
+        if (data.type === "ping") return;
+        if (data.type === "welcome") return;
+        if (data.type === "confimr_subscription") return;
+
+        const message = data.message;
+
+        console.log(message)
+
+        setNewMessage(message)
+
+
+        // postMessage(message);
+
+
+
+    }
+
+
+    useEffect(async () => {
+        await fetch(`/chats`)
+            .then(r => r.json())
+            .then(data => setChats(data.filter(chat => chat.profile_id === currentUserId)))
+
+        // console.log(useSelector(selectPosts))
 
 
 
 
-    // }, [])
+    }, [])
+
+    console.log(chats[0]?.messages)
 
 
     function createPost() {
@@ -76,10 +129,34 @@ export default function Home() {
 
     }
 
+    const handleDisplayChat = (id) => {
+        setChat({
+            display: true,
+            id: id,
+            messages: chats.filter(chat => chat.id === id)[0].messages
+        });
+    }
+
+    const goBack = () => {
+        setChat({
+            display: false,
+            id: null,
+            messages: null
+        })
+    }
+
+    console.log(chat.messages)
+
     const displayPosts = allPosts.map(post => {
         return (
             <PostCard key={post.id} id={post.id} firstName={post.firstName} lastName={post.lastName} content={post.content} image={post.image}
                 comments={post.my_comments} likes={post.my_likes} dislikes={post.my_dislikes} profileId={post.profile_id} />
+        )
+    })
+
+    const displayChats = chats.map(chat => {
+        return (
+            <Chats key={chat.id} id={chat.id} messages={chat.messages} handleDisplayChat={handleDisplayChat} />
         )
     })
     return (
@@ -194,7 +271,7 @@ export default function Home() {
 
 
                         <Container>
-                            <div className='chatBorder'>
+                            {!chat.display ? <div className='chatBorder'>
 
                                 {/* <Card className='border border-3 border-success p-2'>
                                     <Card.Title>Mark G.</Card.Title>
@@ -206,6 +283,21 @@ export default function Home() {
                                     <Card.Body>Hola Joshua!</Card.Body>
                                 </Card> */}
 
+                                <div>
+                                    <input type="search" placeholder="Search Chat..." />
+                                    <button>Create a new Chat</button>
+                                </div>
+
+                                {/* <div>
+                                    <Dropdown show>
+                                        <Dropdown.Menu>
+                                            <Dropdown.Item>chat1</Dropdown.Item>
+                                            <Dropdown.Item>chat2</Dropdown.Item>
+                                        </Dropdown.Menu>
+                                    </Dropdown>
+                                </div> */}
+
+                                {/* <Chats />
                                 <Chats />
                                 <Chats />
                                 <Chats />
@@ -214,17 +306,22 @@ export default function Home() {
                                 <Chats />
                                 <Chats />
                                 <Chats />
-                                <Chats />
-                                <Chats />
+                                <Chats /> */}
+
+                                {displayChats}
 
 
                             </div>
 
 
 
-                            {/* <div className="mt-5">
-                                <Chat />
-                            </div> */}
+
+                                :
+                                <div className="mt-5">
+                                    <Chat id={chat.id} messages={chat.messages} goBack={goBack} ws={ws} newMessage={newMessage} />
+                                </div>
+                            }
+
 
 
 

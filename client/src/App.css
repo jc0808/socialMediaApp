@@ -361,6 +361,12 @@ body {
 }
 
 
+#messagesContainer {
+  overflow: scroll;
+  height: 450px;
+
+}
+
 .chat .chatInfo {
   height: 50px;
   background-color: #5d5b8d;
@@ -384,8 +390,8 @@ body {
 .messages {
   background-color: darkcyan;
   padding: 10px;
-  height: calc(100% - 160px);
-  overflow: scroll;
+  /* height: calc(100% - 160px); */
+  /* overflow: scroll; */
 }
 
 .messages .message {
@@ -461,6 +467,13 @@ body {
   display: flex;
   align-items: center;
   gap: 10px;
+}
+
+.chat .input .send button {
+  border: none;
+  padding: 10px 15px;
+  color: white;
+  background-color: #3e3c61;
 }
 
 

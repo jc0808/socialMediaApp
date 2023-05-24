@@ -7,6 +7,10 @@ class Profile < ApplicationRecord
     has_many :likes, through: :posts, dependent: :destroy
     has_many :dislikes, through: :posts, dependent: :destroy
 
+    
+    has_many :messages, :class_name => 'Message', :foreign_key => 'receiver_id'
+    has_many :chats, through: :messages
+
     validates :firstName, :lastName, :location, presence: true
 
     def followers_posts

@@ -7,7 +7,7 @@ import Profile from './Profile';
 import { Routes, Route, useNavigate } from "react-router-dom";
 import Account from './Account';
 import Login from './Login';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { store, selectMyProfileInfo, selectCurrentUserID, selectUserProfiles } from './Store';
 import { useSelector } from 'react-redux';
 import Profile2 from './Profile2';
@@ -20,8 +20,10 @@ function App() {
 
 
 
-  const [viewP, setViewP] = useState(null);
+  const [viewP, setViewP] = useState(parseInt(localStorage.getItem('profileId')));
   // let viewP = null;
+
+  // let viewP = useRef(localStorage.getItem('id'));
 
   const navigate = useNavigate();
 
@@ -72,6 +74,8 @@ function App() {
 
     const findUser = profiles.filter(p => p.id === id);
     setViewP(findUser[0].id);
+    // viewP.current = findUser[0].id
+    localStorage.setItem('profileId', findUser[0].id);
     // viewP = findUser
 
 
@@ -80,6 +84,8 @@ function App() {
 
 
 
+
+  console.log(parseInt(localStorage.getItem('profileId')))
 
   return (
     <>
