@@ -6,7 +6,7 @@ import Input from "./Input";
 
 
 
-export default function Chat({ id, messages, goBack, ws, newMessage }) {
+export default function Chat({ id, messages, goBack, ws, newMessage, receiver }) {
 
 
     const currentUserId = useSelector(selectCurrentUserID);
@@ -49,7 +49,6 @@ export default function Chat({ id, messages, goBack, ws, newMessage }) {
 
     useEffect(() => {
         loadMessages();
-
     }, [])
 
 
@@ -60,7 +59,7 @@ export default function Chat({ id, messages, goBack, ws, newMessage }) {
 
 
     const postMessage = (message) => {
-        setChatMessages([...chatMessages, message])
+        setChatMessages(message)
         // mContainer.scrollTop = mContainer.scrollHeight;
         resetScroll();
     }
@@ -87,11 +86,13 @@ export default function Chat({ id, messages, goBack, ws, newMessage }) {
 
     const sendMessage = (message) => {
 
-        const newMessage = {
+
+
+        const newM = {
             id: chatMessages.length === 0 ? 1 : chatMessages[chatMessages.length - 1].id + 1,
             chat_id: id,
             profile_id: currentUserId,
-            receiver_id: 2,
+            receiver_id: receiver,
             content: message
         };
 
@@ -101,16 +102,21 @@ export default function Chat({ id, messages, goBack, ws, newMessage }) {
                 "Content-Type": "application/json"
             },
             body: JSON.stringify({
-                profile_id: newMessage.profile_id,
-                receiver_id: newMessage.receiver_id,
-                chat_id: newMessage.chat_id,
-                content: newMessage.content
+                profile_id: newM.profile_id,
+                receiver_id: newM.receiver_id,
+                chat_id: newM.chat_id,
+                content: newM.content
             })
         })
         // .then(postMessage(newMessage))
         // setMessages([...messages, newMessage])
 
-        postMessage(newMessage)
+        // if (newMessage === "" || newMessage === undefined) {
+        //     return
+        // } else {
+        // postMessage(newM)
+        //     console.log(newMessage)
+        // }
     }
 
 

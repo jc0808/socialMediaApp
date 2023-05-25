@@ -12,7 +12,7 @@ Rails.application.routes.draw do
   # resources :likes
   # resources :followers, only: [:index]
   resources :profiles, only: [:index, :show]
-  resources :users, only: [:index]
+  resources :users, only: [:create]
   get "/profileFPosts/:id", to: 'profile_followers_posts#show'
   get "/auth", to: "authentications#show"
   post "/login", to: "sessions#create"

@@ -360,6 +360,11 @@ body {
 
 }
 
+.chatSearchAndButton {
+  display: flex;
+  justify-content: space-around;
+}
+
 
 #messagesContainer {
   overflow: scroll;
@@ -533,10 +538,11 @@ body {
 .signUpBox {
   border: solid 2px;
   width: 400px;
-  height: 480px;
+  height: fit-content;
   padding: 10px;
   text-align: center;
   font-weight: bolder;
+  display: grid;
 }
 
 .resetPasswordBox {
@@ -560,19 +566,20 @@ body {
   font-size: 20px;
 }
 
-.form {
+/* .form {
   text-align: center;
   margin: 10%;
   display: inline-block;
 
-}
+} */
 
 .form #username,
 #password,
 #firstname,
 #lastname,
 #address,
-#confirmPassword {
+#confirmPassword,
+#location {
   border-radius: 20px;
   padding: 10px;
   color: purple;
@@ -618,4 +625,40 @@ body {
   padding: 8px;
 
 
+}
+
+.profilePicC {
+  display: flex;
+  justify-content: center;
+}
+
+.profilePicC div {
+  border: 2px solid black;
+  border-radius: 50%;
+  height: 150px;
+  width: 150px;
+}
+
+.profilePicC div img {
+  image-rendering: optimizeQuality;
+  width: 150px;
+}
+
+#imageInput {
+  border: 2px dashed black;
+
+  padding: 4px;
+}
+
+#imageInput label:hover {
+  color: blue;
+}
+
+#imageInput input {
+  display: none;
+}
+
+.form {
+  display: grid;
+  justify-content: center;
 }

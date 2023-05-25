@@ -4,12 +4,23 @@ class UsersController < ApplicationController
 
     skip_before_action :authorized, only: [:index]
 
-    def index
-    render json: User.all, status: :ok
-    end
+    # def index
+    # render json: User.all, status: :ok
+    # end
 
     def show
         render json: User.find(params[:id])
+    end
+
+    def create
+
+        
+        newUser = User.create!(user_params)
+        newUser.createProfile(profile_params)
+
+        # session[:user_id] = newUser.id
+        # cookies[:user_id] = newUser.id
+        render json: newUser.profile.id, status: :created
     end
 
     # def create
@@ -30,6 +41,17 @@ class UsersController < ApplicationController
     #     user = Adopter.find(params[:id]).destroy
     #     head :no_content
     # end
+
+
+    private
+
+    def user_params
+        params.permit(:username, :password)
+    end
+
+    def profile_params
+        params[:profile].permit(:firstName, :lastName, :location, :image)
+    end
 
 
 end

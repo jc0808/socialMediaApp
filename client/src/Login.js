@@ -74,7 +74,7 @@ export default function Login({ handleLogin }) {
 
                     <span className="dotted">-------------------------</span>
 
-                    {/* <div onClick={() => navigate.push('/signUp')} style={{ cursor: "pointer" }}>Create an Account</div> */}
+                    <div onClick={() => navigate('/signUp')} style={{ cursor: "pointer" }}>Create an Account</div>
                 </div>
 
 

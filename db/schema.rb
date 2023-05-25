@@ -18,6 +18,7 @@ ActiveRecord::Schema.define(version: 2023_05_19_225350) do
   create_table "chats", force: :cascade do |t|
     t.string "name"
     t.integer "profile_id"
+    t.integer "profile_two_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
@@ -73,6 +74,7 @@ ActiveRecord::Schema.define(version: 2023_05_19_225350) do
     t.string "lastName"
     t.integer "user_id"
     t.string "location"
+    t.string "image"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end

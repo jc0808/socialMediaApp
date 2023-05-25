@@ -4,13 +4,17 @@ import Chat from "./Chat";
 import Chats from "./Chats";
 import PostCard from "./PostCard";
 
-import { currentUser, selectCurrentUserID, selectPosts } from './Store';
+import { currentUser, selectCurrentUserID, selectMyFollowers, selectPosts } from './Store';
 import { useDispatch, useSelector } from "react-redux";
+import ProfileCard from "./ProfileCard";
 
-const ws = new WebSocket("ws://localhost:3000/cable")
+// const ws = new WebSocket("ws://localhost:3000/cable")
+
+// const gid = Math.random().toString(36).substring(2, 15);
 
 
-export default function Home() {
+
+export default function Home({ profiles }) {
 
     const [post, setPost] = useState(false);
     // const [allPosts, setAllPosts] = useState(useSelector(selectPosts));
@@ -19,69 +23,84 @@ export default function Home() {
     const allPosts = useSelector(selectPosts);
     const dispatch = useDispatch();
 
+
+
     const [chats, setChats] = useState([]);
 
-    const [guid, setGuid] = useState("");
+    // const [guid, setGuid] = useState("");
 
-    const [newMessage, setNewMessage] = useState(null);
+    // const [newMessage, setNewMessage] = useState(null);
 
     const currentUserId = useSelector(selectCurrentUserID);
+
+    const [openSearchNewChat, setOpenSearchNewChat] = useState(false);
+
+    const [searchTerm, setSearchTerm] = useState('');
+
+    const myFollowers = useSelector(selectMyFollowers);
+
+
 
     const [chat, setChat] = useState({
         display: false,
         id: null,
-        messages: []
+        messages: [],
+        receiver: null
     });
 
-    ws.onopen = () => {
-        console.log("Connected to websocket server");
-        setGuid(Math.random().toString(36).substring(2, 15));
-
-        ws.send(
-            JSON.stringify({
-                command: "subscribe",
-                identifier: JSON.stringify({
-                    id: guid,
-                    channel: "MessagesChannel"
-                })
-            })
-        )
-    }
-
-    ws.onmessage = (e) => {
-        const data = JSON.parse(e.data)
-
-        if (data.type === "ping") return;
-        if (data.type === "welcome") return;
-        if (data.type === "confimr_subscription") return;
-
-        const message = data.message;
-
-        console.log(message)
-
-        setNewMessage(message)
 
 
-        // postMessage(message);
+    // useEffect(() => {
+
+    //     const ws = new WebSocket("ws://localhost:3000/cable")
+    //     ws.onopen = () => {
+    //         console.log("Connected to websocket server");
+    //         setGuid(gid);
 
 
 
-    }
+    //         ws.send(
+    //             JSON.stringify({
+    //                 command: "subscribe",
+    //                 identifier: JSON.stringify({
+    //                     id: guid,
+    //                     channel: "ChatsChannel"
+    //                 })
+    //             })
+    //         )
+    //     }
+
+    //     ws.onmessage = (e) => {
+    //         const data = JSON.parse(e.data)
+
+    //         if (data.type === "ping") return;
+    //         if (data.type === "welcome") return;
+    //         if (data.type === "confimr_subscription") return;
+
+    //         console.log(data)
+    //         const chat = data.message;
+    //         if (chat !== undefined) {
+    //             // postMessage(message)
+    //             // console.log(message)
+    //             setChats([...chats, chat])
+    //         }
 
 
-    useEffect(async () => {
-        await fetch(`/chats`)
+    //     }
+    // }, [])
+
+
+
+
+
+    useEffect(() => {
+        fetch(`/chats`)
             .then(r => r.json())
             .then(data => setChats(data.filter(chat => chat.profile_id === currentUserId)))
 
-        // console.log(useSelector(selectPosts))
-
-
-
-
     }, [])
 
-    console.log(chats[0]?.messages)
+    // console.log(chats[0]?.messages)
 
 
     function createPost() {
@@ -133,7 +152,8 @@ export default function Home() {
         setChat({
             display: true,
             id: id,
-            messages: chats.filter(chat => chat.id === id)[0].messages
+            messages: chats.filter(chat => chat.id === id)[0].messages,
+            receiver: chats.filter(chat => chat.id === id)[0].profile_two_id
         });
     }
 
@@ -141,13 +161,35 @@ export default function Home() {
         setChat({
             display: false,
             id: null,
-            messages: null
+            messages: null,
+            reciever: null
         })
     }
 
-    console.log(chat.messages)
+    const handleInput = e => {
+        setSearchTerm(e.target.value);
+    }
 
-    const displayPosts = allPosts.map(post => {
+    // console.log(chat.messages)
+
+    const handleCreateChat = (id) => {
+        fetch('/chats', {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                "name": null,
+                "profile_id": currentUserId,
+                "profile_two_id": id
+            })
+        })
+            .then(setOpenSearchNewChat(false))
+    }
+
+
+
+    const displayPosts = allPosts?.map(post => {
         return (
             <PostCard key={post.id} id={post.id} firstName={post.firstName} lastName={post.lastName} content={post.content} image={post.image}
                 comments={post.my_comments} likes={post.my_likes} dislikes={post.my_dislikes} profileId={post.profile_id} />
@@ -156,7 +198,26 @@ export default function Home() {
 
     const displayChats = chats.map(chat => {
         return (
-            <Chats key={chat.id} id={chat.id} messages={chat.messages} handleDisplayChat={handleDisplayChat} />
+            <Chats key={chat.id} id={chat.id} messages={chat.messages} handleDisplayChat={handleDisplayChat} user2={chat.profile_two_id} />
+        )
+    })
+
+    const displayFriendsProfiles = profiles?.filter(p => `${p.firstName.toLowerCase()} ${p.lastName.toLowerCase()}`.includes(searchTerm)).map(profile => {
+
+
+        const followerFound = profile.followers.find(p => p.profile_id === currentUserId);
+
+        const isFollowing = followerFound ? "✅" : null;
+        return (
+
+
+            <div key={profile.id} className="userChat" onClick={() => handleCreateChat(profile.id)}>
+                <img src="https://cdn1.vectorstock.com/i/1000x1000/51/95/businessman-avatar-cartoon-character-profile-vector-25645195.jpg" alt="profile"></img>
+                <div className="userChatInfo">
+                    <span>{`${profile.firstName} ${profile.lastName}  `}</span>
+                    <label>{isFollowing}</label>
+                </div>
+            </div>
         )
     })
     return (
@@ -283,9 +344,10 @@ export default function Home() {
                                     <Card.Body>Hola Joshua!</Card.Body>
                                 </Card> */}
 
-                                <div>
-                                    <input type="search" placeholder="Search Chat..." />
-                                    <button>Create a new Chat</button>
+                                <div className="chatSearchAndButton">
+
+                                    {openSearchNewChat ? <input type="search" placeholder="Search profiles..." onChange={handleInput} /> : <input type="search" placeholder="Search Chat..." onChange={handleInput} />}
+                                    {openSearchNewChat ? <button onClick={() => setOpenSearchNewChat(openSearchNewChat => !openSearchNewChat)}>Cancel</button> : <button onClick={() => setOpenSearchNewChat(openSearchNewChat => !openSearchNewChat)}>Create a new Chat</button>}
                                 </div>
 
                                 {/* <div>
@@ -308,7 +370,7 @@ export default function Home() {
                                 <Chats />
                                 <Chats /> */}
 
-                                {displayChats}
+                                {!openSearchNewChat ? displayChats : displayFriendsProfiles}
 
 
                             </div>
@@ -318,7 +380,7 @@ export default function Home() {
 
                                 :
                                 <div className="mt-5">
-                                    <Chat id={chat.id} messages={chat.messages} goBack={goBack} ws={ws} newMessage={newMessage} />
+                                    <Chat id={chat.id} messages={chat.messages} goBack={goBack} receiver={chat.receiver} />
                                 </div>
                             }
 

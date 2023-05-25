@@ -3,12 +3,15 @@ import { useSelector } from "react-redux";
 import { selectMyProfileInfo } from "./Store";
 import ProfileCard from "./ProfileCard";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
-export default function NavBar({ profiles, profileView }) {
+export default function NavBar({ profiles, profileView, logOut }) {
 
     const myProfileInfo = useSelector(selectMyProfileInfo);
 
     const [searchTerm, setSearchTerm] = useState('');
+
+    const navigate = useNavigate();
 
 
 
@@ -16,7 +19,13 @@ export default function NavBar({ profiles, profileView }) {
         setSearchTerm(e.target.value);
     }
 
-    const displayCards = profiles.filter(p => `${p.firstName.toLowerCase()} ${p.lastName.toLowerCase()}`.includes(searchTerm)).map(profile => {
+    const handleLogout = () => {
+        fetch("/logout", {
+            method: "DELETE",
+        }).then(logOut)
+    }
+
+    const displayCards = profiles?.filter(p => `${p.firstName.toLowerCase()} ${p.lastName.toLowerCase()}`.includes(searchTerm)).map(profile => {
         return (
 
             <Dropdown.Item>
@@ -40,11 +49,11 @@ export default function NavBar({ profiles, profileView }) {
                             style={{ maxHeight: '100px' }}
                             navbarScroll
                         >
-                            <Nav.Link href="/">Home</Nav.Link>
-                            <Nav.Link href="/myProfile">Profile</Nav.Link>
+                            <Nav.Link onClick={() => navigate('/')}>Home</Nav.Link>
+                            <Nav.Link onClick={() => navigate("/myProfile")}>Profile</Nav.Link>
                             <NavDropdown title="Settings" id="navbarScrollingDropdown">
-                                <NavDropdown.Item href="/account">Account</NavDropdown.Item>
-                                <NavDropdown.Item href="#action4">
+                                <NavDropdown.Item onClick={() => navigate("/account")}>Account</NavDropdown.Item>
+                                <NavDropdown.Item onClick={handleLogout}>
                                     Log Out
                                 </NavDropdown.Item>
                                 <NavDropdown.Divider />

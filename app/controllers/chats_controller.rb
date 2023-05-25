@@ -8,12 +8,18 @@ class ChatsController < ApplicationController
     end
 
     def show
-        chat  = Chat.find_by(id: params[:id]);
+        chat  = Profile.find_by(id: params[:id]).chats;
         render json: chat, status: :found
     end
 
-    # def create
-    #     chat = Chat.find_by(id: params[:id]).id
-    #     chat = chat.messages
-    # end
+    def create
+        chat = Chat.create!(chat_params)
+        render json: chat, status: :created
+    end
+
+    private
+
+    def chat_params
+        params.permit(:name, :profile_id, :profile_two_id)
+    end
 end

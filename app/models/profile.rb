@@ -72,6 +72,7 @@ class Profile < ApplicationRecord
             posts: profile.posts.map{|post| {
                 id: post.id,
                 content: post.content,
+                image: post.image,
                 profile_id: post.profile_id,
                 my_likes: post.likes,
                 my_dislikes: post.dislikes,

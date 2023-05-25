@@ -14,8 +14,9 @@ class AuthenticationsController < ApplicationController
     # end
 
     def show
-        user = User.find(session[:user_id]).profile
-        render json: user
+        
+        profile = Profile.find(session[:user_id])
+        render json: profile.id
     end
 
     # def update
