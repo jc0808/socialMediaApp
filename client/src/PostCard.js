@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { loadData, selectCurrentUserID } from "./Store";
 
 
-export default function PostCard({ id, content, image, firstName, lastName, likes, dislikes, comments, profileId }) {
+export default function PostCard({ id, content, image, firstName, lastName, likes, dislikes, comments, profileId, pImage }) {
 
     // const [likess, setLikes] = useState(likes.length);
     // const [dislikess, setDislikes] = useState(dislikes.length);
@@ -73,15 +73,32 @@ export default function PostCard({ id, content, image, firstName, lastName, like
         }
 
 
+
         if (myPost) {
             if (!findDislike) {
                 if (findLike) {
                     dispatch(removeLikeToMyPost);
                     setIconLike(null);
 
+                    fetch(`/likes/${id}`, {
+                        method: "DELETE",
+                    })
+
                 } else {
                     dispatch(addLikeToMyPost);
                     setIconLike('✅');
+
+                    fetch('/likes', {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({
+                            "profile_id": currentUserId,
+                            "post_id": id
+                        })
+                    })
+
 
                 }
             }
@@ -93,11 +110,24 @@ export default function PostCard({ id, content, image, firstName, lastName, like
                 if (findLike) {
                     dispatch(removeLikeToMyFPosts);
                     setIconLike(null);
-                    console.log('found your like')
+                    fetch(`/likes/${id}`, {
+                        method: "DELETE",
+                    })
 
                 } else {
                     dispatch(addLikeToMyFPost);
                     setIconLike('✅');
+
+                    fetch('/likes', {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({
+                            "profile_id": currentUserId,
+                            "post_id": id
+                        })
+                    })
 
                 }
             }
@@ -143,15 +173,36 @@ export default function PostCard({ id, content, image, firstName, lastName, like
         }
 
 
+
+
         if (myPost) {
             if (!findLike) {
                 if (findDislike) {
                     dispatch(RemoveDislikeToMyPost);
                     setIconDislike(null);
 
+                    fetch(`/dislikes/${id}`, {
+                        method: "DELETE",
+                    })
+
+
+
+
                 } else {
                     dispatch(addDislikeToMyPost);
                     setIconDislike('❌');
+
+                    fetch('/dislikes', {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({
+                            "profile_id": currentUserId,
+                            "post_id": id
+                        })
+                    })
+
 
 
                 }
@@ -162,9 +213,24 @@ export default function PostCard({ id, content, image, firstName, lastName, like
                     dispatch(RemoveDislikeToFPost);
                     setIconDislike(null);
 
+                    fetch(`/dislikes/${id}`, {
+                        method: "DELETE",
+                    })
+
                 } else {
                     dispatch(addDislikeToFPost);
                     setIconDislike('❌');
+
+                    fetch('/dislikes', {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({
+                            "profile_id": currentUserId,
+                            "post_id": id
+                        })
+                    })
 
 
                 }
@@ -179,26 +245,79 @@ export default function PostCard({ id, content, image, firstName, lastName, like
         const myPost = profileId === currentUserId ? true : false;
         console.log(id)
 
-        const addCommentToMyPost = {
-            type: 'addCommentToMyPost',
-            payload: {
-                id: id,
-                content: comment
-            }
-        }
+        // const addCommentToMyPost = {
+        //     type: 'addCommentToMyPost',
+        //     payload: {
+        //         id: id,
+        //         content: comment
+        //     }
+        // }
 
-        const addCommentToMyFPost = {
-            type: 'addCommentToMyFPost',
-            payload: {
-                id: id,
-                content: comment
-            }
-        }
+        // const addCommentToMyFPost = {
+        //     type: 'addCommentToMyFPost',
+        //     payload: {
+        //         id: id,
+        //         content: comment
+        //     }
+        // }
 
         if (myPost) {
-            dispatch(addCommentToMyPost);
+
+            fetch("/comments", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    profile_id: currentUserId,
+                    post_id: id,
+                    content: comment
+                })
+            })
+
+                .then(res => res.json())
+                .then(comment => {
+                    const addCommentToMyPost = {
+                        type: 'addCommentToMyPost',
+                        payload: {
+                            id: comment.id,
+                            post_id: comment.post_id,
+                            content: comment.content
+                        }
+                    }
+                    dispatch(addCommentToMyPost);
+
+                })
+
         } else {
-            dispatch(addCommentToMyFPost);
+
+            fetch("/comments", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    profile_id: currentUserId,
+                    post_id: id,
+                    content: comment
+                })
+            })
+
+                .then(res => res.json())
+                .then(comment => {
+                    const addCommentToMyFPost = {
+                        type: 'addCommentToMyFPost',
+                        payload: {
+                            id: comment.id,
+                            post_id: comment.post_id,
+                            content: comment.content
+                        }
+                    }
+
+                    dispatch(addCommentToMyFPost);
+
+                })
+
         }
     }
 
@@ -211,15 +330,16 @@ export default function PostCard({ id, content, image, firstName, lastName, like
 
 
     const displayCommentCard = comments.map(comment => {
+
         return (
-            <CommentCard key={comment.id} id={comment.id} content={comment.content} firstName={comment.firstName} lastName={comment.lastName} />
+            <CommentCard key={comment.id} id={comment.id} content={comment.content} firstName={comment.firstName} lastName={comment.lastName} profile_id={comment.profile_id} />
         )
     })
 
     return (
         <>
-            <Card style={{ width: '25rem', height: 'fit-content' }} className="p-3 mt-3">
-                <Card.Title className='text-center'> <img style={{ width: "40px" }} src='https://cdn-icons-png.flaticon.com/512/5556/5556529.png' alt="profile" />{`${firstName} ${lastName}`}</Card.Title>
+            <Card id="postCard" className="p-3 mt-3">
+                <Card.Title className='text-center'> <img style={{ width: "40px" }} src={pImage} alt="" />{`${firstName} ${lastName}`}</Card.Title>
                 <Card.Text>
                     {content}
                 </Card.Text>

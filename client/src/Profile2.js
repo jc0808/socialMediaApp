@@ -17,10 +17,11 @@ export default function Profile2({ id }) {
     const myProfileInfo = useSelector(selectMyProfileInfo);
     const userProfiles = useSelector(selectUserProfiles);
 
+    const currentUserId = useSelector(selectCurrentUserID);
+
     const profileInfo = userProfiles.find(user => user.id === id);
 
-
-
+    console.log(userProfiles)
 
 
     const found = profileInfo.followers.find(follower => follower.profile_id === myProfileInfo.id);
@@ -50,26 +51,63 @@ export default function Profile2({ id }) {
 
     const handleFollow = () => {
 
-        const followProfile = {
-            type: 'followProfile',
-            payload: {
-                id: profileInfo.id
-            }
-        };
 
-        dispatch(followProfile)
+        fetch("/followers", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                following_id: profileInfo.id,
+                profile_id: currentUserId
+            })
+        })
+
+            .then(res => res.json())
+            .then(follow => {
+                const followProfile = {
+                    type: 'followProfile',
+                    payload: {
+                        id: follow.id,
+                        following_id: follow.following_id
+                    }
+                };
+
+                dispatch(followProfile)
+            })
+
+
+
+
+
 
     }
 
-    const handleRemoveFollower = () => {
-        const removeFollower = {
-            type: 'removeFollower',
-            payload: {
-                id: profileInfo.id
-            }
-        };
+    // console.log(profileInfo.followers.find(follower => follower.profile_id === currentUserId))
 
-        dispatch(removeFollower)
+    const handleRemoveFollower = () => {
+
+        const findFollowId = profileInfo.followers.find(follower => follower.profile_id === currentUserId).id;
+
+
+
+
+        fetch(`/followers/${findFollowId}`, {
+            method: "DELETE"
+        })
+
+            .then(() => {
+                const removeFollower = {
+                    type: 'removeFollower',
+                    payload: {
+                        id: profileInfo.id
+                    }
+                };
+
+                dispatch(removeFollower)
+            })
+
+
 
     }
 
@@ -105,9 +143,9 @@ export default function Profile2({ id }) {
                     <Col style={{ backgroundColor: "lightGreen" }}>
                         <h2 id="profileButtons" onClick={() => changeV("posts")}>Posts {`(${profileInfo?.posts?.length})`} </h2>
                     </Col>
-                    <Col style={{ backgroundColor: "lightGreen" }}>
+                    {/* <Col style={{ backgroundColor: "lightGreen" }}>
                         <h2 id="profileButtons" onClick={() => changeV("photos")}>Photos (10) </h2>
-                    </Col>
+                    </Col> */}
 
                     <Col style={{ backgroundColor: "lightGreen" }}>
                         <h2 id="profileButtons" onClick={() => changeV("friends")}>Followers {`(${profileInfo?.followers?.length})`} </h2>

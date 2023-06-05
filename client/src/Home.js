@@ -4,9 +4,9 @@ import Chat from "./Chat";
 import Chats from "./Chats";
 import PostCard from "./PostCard";
 
-import { currentUser, selectCurrentUserID, selectMyFollowers, selectPosts } from './Store';
+import { selectCurrentUserID, selectMyFollowers, selectPosts } from './Store';
 import { useDispatch, useSelector } from "react-redux";
-import ProfileCard from "./ProfileCard";
+
 
 // const ws = new WebSocket("ws://localhost:3000/cable")
 
@@ -26,6 +26,8 @@ export default function Home({ profiles }) {
 
 
     const [chats, setChats] = useState([]);
+
+    const [chatErrorMessage, setChatErrorMessage] = useState(null);
 
     // const [guid, setGuid] = useState("");
 
@@ -96,11 +98,17 @@ export default function Home({ profiles }) {
     useEffect(() => {
         fetch(`/chats`)
             .then(r => r.json())
-            .then(data => setChats(data.filter(chat => chat.profile_id === currentUserId)))
+            .then(data => setChats(data.filter(chat => {
+                if (chat.profile_id === currentUserId) {
+                    return chat
+                } else if (chat.profile_two_id === currentUserId) {
+                    return chat
+                }
+            })))
 
     }, [])
 
-    // console.log(chats[0]?.messages)
+    console.log(chats)
 
 
     function createPost() {
@@ -127,33 +135,48 @@ export default function Home({ profiles }) {
 
         // convert2base64(e.target['imageUpload'].files[0])
 
-        // const newPost = {
-        //     id: 0,
-        //     profile_id: 0,
-        //     content: content,
-        //     image: image
-        // }
 
-        const addpost = {
-            type: 'addPost',
-            payload: {
+        fetch('/posts', {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
                 content: content,
-                image: image
-            }
-        }
+                image: image,
+                profile_id: currentUserId
+            })
+        })
+            .then(res => res.json())
+            .then(post => {
+                const addpost = {
+                    type: 'addPost',
+                    payload: {
+                        id: post.id,
+                        content: post.content,
+                        image: post.image
+                    }
+                }
 
-        dispatch(addpost);
+                dispatch(addpost);
+            })
+
+
 
         setImage('')
 
     }
 
     const handleDisplayChat = (id) => {
+
+        const chat = chats.filter(chat => chat.id === id)[0];
+
+        const receiver = chat.profile_id !== currentUserId ? chat.profile_id : chat.profile_two_id
         setChat({
             display: true,
             id: id,
-            messages: chats.filter(chat => chat.id === id)[0].messages,
-            receiver: chats.filter(chat => chat.id === id)[0].profile_two_id
+            messages: chat.messages,
+            receiver: receiver
         });
     }
 
@@ -170,37 +193,64 @@ export default function Home({ profiles }) {
         setSearchTerm(e.target.value);
     }
 
-    // console.log(chat.messages)
+    console.log(chats)
+
 
     const handleCreateChat = (id) => {
-        fetch('/chats', {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                "name": null,
-                "profile_id": currentUserId,
-                "profile_two_id": id
+        console.log(id)
+
+        const findChat = chats.find(chat => {
+            if (chat.profile_id === id) {
+                return chat
+            } else if (chat.profile_two_id === id) {
+                return chat
+            }
+        });
+
+
+        if (!findChat) {
+            fetch('/chats', {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    "name": null,
+                    "profile_id": currentUserId,
+                    "profile_two_id": id
+                })
             })
-        })
-            .then(setOpenSearchNewChat(false))
+                .then(res => res.json())
+                .then(newChat => setChats(chats => [...chats, newChat]))
+                .then(setOpenSearchNewChat(false))
+        } else {
+            setChatErrorMessage("You already have a chat with this person")
+        }
     }
 
+
+    //add a unique key to the posts
 
 
     const displayPosts = allPosts?.map(post => {
         return (
             <PostCard key={post.id} id={post.id} firstName={post.firstName} lastName={post.lastName} content={post.content} image={post.image}
-                comments={post.my_comments} likes={post.my_likes} dislikes={post.my_dislikes} profileId={post.profile_id} />
+                comments={post.my_comments} likes={post.my_likes} dislikes={post.my_dislikes} profileId={post.profile_id} pImage={post.pImage} />
         )
     })
 
     const displayChats = chats.map(chat => {
         return (
-            <Chats key={chat.id} id={chat.id} messages={chat.messages} handleDisplayChat={handleDisplayChat} user2={chat.profile_two_id} />
+            <Chats key={chat.id} id={chat.id} messages={chat.messages} handleDisplayChat={handleDisplayChat} user1={chat.profile_id} user2={chat.profile_two_id} />
         )
     })
+
+    const newChat = () => {
+        setOpenSearchNewChat(openSearchNewChat => !openSearchNewChat)
+        setChatErrorMessage(null);
+    }
+
+
 
     const displayFriendsProfiles = profiles?.filter(p => `${p.firstName.toLowerCase()} ${p.lastName.toLowerCase()}`.includes(searchTerm)).map(profile => {
 
@@ -223,18 +273,18 @@ export default function Home({ profiles }) {
     return (
         <div>
             <Container id='homeContainer'>
-                <Row id='homeContainer' style={{ backgroundColor: "blue" }}>
+                <Row id='homeContainer'>
 
                     {/* This will only appear on small devices */}
-                    <Col className='mt-5 d-block d-sm-none d-flex justify-content-evenly p-2' style={{ backgroundColor: "yellow" }}>
+                    {/* <Col className='mt-5 d-block d-sm-none d-flex justify-content-evenly p-2' style={{ backgroundColor: "yellow" }}>
                         <h3>Make a post</h3>
                         <h3>Messages</h3>
-                    </Col>
+                    </Col> */}
 
                     {/* Left side */}
-                    <Col className='mt-5 d-none d-lg-block' id='left' style={{ backgroundColor: "yellow" }}>
+                    <Col className='mt-5 d-none d-lg-block homeC' id='left' >
 
-                        <h1 className='text-center'>Left Side</h1>
+                        <h1 className='text-center'>Create post</h1>
 
                         <Container fluid>
 
@@ -267,9 +317,9 @@ export default function Home({ profiles }) {
 
 
                         {/* This will only appear on medium devices */}
-                        <Col className='mt-5 d-none d-md-block ' style={{ backgroundColor: "yellow" }}>
+                        <Col className='mt-5 d-none d-md-block homeC' >
 
-                            <h1 className='text-center'>Chats</h1>
+                            {/* <h1 className='text-center'>Chats</h1>
 
 
                             <Container>
@@ -289,7 +339,7 @@ export default function Home({ profiles }) {
 
                                 </div>
 
-                            </Container>
+                            </Container> */}
                         </Col>
 
 
@@ -297,36 +347,17 @@ export default function Home({ profiles }) {
 
 
                     {/* Middle side */}
-                    <Col className='mt-5 postsCol ' id='middle' style={{ backgroundColor: "red" }} >
-
-
-                        {/* <Container fluid> */}
-
-                        {/* <PostCard showImage="d-none" />
-                        <PostCard />
-                        <PostCard />
-                        <PostCard />
-                        <PostCard />
-                        <PostCard showImage="d-none" />
-                        <PostCard showImage="d-none" />
-                        <PostCard showImage="d-none" />
-                        <PostCard showImage="d-none" /> */}
+                    <Col className='mt-5 postsCol homeC' id='middle'  >
 
                         {displayPosts ? displayPosts : null}
 
-
-
-
-
-
-                        {/* </Container> */}
 
 
                     </Col>
 
                     {/* Right side */}
                     {/* This will only appear on large devices */}
-                    <Col className='mt-5 d-none d-md-block ' id='right' style={{ backgroundColor: "yellow" }}>
+                    <Col className='mt-5 d-none d-md-block homeC' id='right' >
                         {/* d-lg-none */}
                         <h1 className='text-center'>Chats</h1>
 
@@ -334,78 +365,25 @@ export default function Home({ profiles }) {
                         <Container>
                             {!chat.display ? <div className='chatBorder'>
 
-                                {/* <Card className='border border-3 border-success p-2'>
-                                    <Card.Title>Mark G.</Card.Title>
-                                    <Card.Body>Hi Joshua! How are you?</Card.Body>
-                                </Card>
-
-                                <Card className='border border-3 border-success p-2  mt-2'>
-                                    <Card.Title>Dayanara R.</Card.Title>
-                                    <Card.Body>Hola Joshua!</Card.Body>
-                                </Card> */}
-
                                 <div className="chatSearchAndButton">
 
                                     {openSearchNewChat ? <input type="search" placeholder="Search profiles..." onChange={handleInput} /> : <input type="search" placeholder="Search Chat..." onChange={handleInput} />}
-                                    {openSearchNewChat ? <button onClick={() => setOpenSearchNewChat(openSearchNewChat => !openSearchNewChat)}>Cancel</button> : <button onClick={() => setOpenSearchNewChat(openSearchNewChat => !openSearchNewChat)}>Create a new Chat</button>}
+                                    {openSearchNewChat ? <button onClick={newChat}>Cancel</button> : <button onClick={() => setOpenSearchNewChat(openSearchNewChat => !openSearchNewChat)}>Create a new Chat</button>}
                                 </div>
 
-                                {/* <div>
-                                    <Dropdown show>
-                                        <Dropdown.Menu>
-                                            <Dropdown.Item>chat1</Dropdown.Item>
-                                            <Dropdown.Item>chat2</Dropdown.Item>
-                                        </Dropdown.Menu>
-                                    </Dropdown>
-                                </div> */}
-
-                                {/* <Chats />
-                                <Chats />
-                                <Chats />
-                                <Chats />
-                                <Chats />
-                                <Chats />
-                                <Chats />
-                                <Chats />
-                                <Chats />
-                                <Chats /> */}
+                                <div style={{ color: "red", textAlign: "center", padding: "3px" }}>
+                                    <label >{chatErrorMessage}</label>
+                                </div>
 
                                 {!openSearchNewChat ? displayChats : displayFriendsProfiles}
 
 
                             </div>
-
-
-
-
                                 :
                                 <div className="mt-5">
                                     <Chat id={chat.id} messages={chat.messages} goBack={goBack} receiver={chat.receiver} />
                                 </div>
                             }
-
-
-
-
-                            {/* <div className="chat">
-                                <div className="messages">
-                                    <div className="right">
-                                        <label>Hello Joshua!</label>
-                                    </div>
-
-                                    <div className="left">
-                                        <label>Hello Carlos!</label>
-                                    </div>
-                                </div>
-
-
-
-
-                                <div className="inputText">
-                                    <input type="text" placeholder="Send a Message ✍️..." />
-                                </div>
-
-                            </div> */}
 
                         </Container>
                     </Col>

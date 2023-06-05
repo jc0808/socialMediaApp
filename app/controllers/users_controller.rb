@@ -13,15 +13,20 @@ class UsersController < ApplicationController
     end
 
     def create
-
-        
         newUser = User.create!(user_params)
         newUser.createProfile(profile_params)
 
-        # session[:user_id] = newUser.id
-        # cookies[:user_id] = newUser.id
+        session[:user_id] = newUser.id
+        cookies[:user_id] = newUser.id
         render json: newUser.profile.id, status: :created
     end
+
+
+    def update 
+        user = User.find(params[:id])
+        user.update!(reset_password_params)
+    end
+
 
     # def create
     #     adopter = Adopter.create!(adopter_params)
@@ -51,6 +56,10 @@ class UsersController < ApplicationController
 
     def profile_params
         params[:profile].permit(:firstName, :lastName, :location, :image)
+    end
+
+    def reset_password_params
+        params.permit(:password)
     end
 
 

@@ -2,30 +2,6 @@ import { applyMiddleware, createStore } from "redux";
 import thunk from "redux-thunk";
 
 
-// export let currentUser;
-
-
-
-
-
-// console.log(currentUser)
-
-// const load = async () => {
-
-
-//     const response = await fetch("/profiles/1");
-//     const data = await response.json();
-
-//     // console.log(data)
-
-//     currentUser = data;
-//     console.log(data)
-// }
-
-// load()
-
-// console.log(currentUser)
-
 const fetchDataBegin = () => ({
     type: "FETCH_DATA_BEGIN"
 })
@@ -41,287 +17,12 @@ const fetchDataFailure = error => ({
 })
 
 
-// export function fetchData() {
-
-
-//     return async dispatch => {
-//         dispatch(fetchDataBegin());
-//         console.log("fetching the data...")
-//         try {
-//             const response = await fetch("/profiles/1");
-//             const res = await handleErrors(response);
-//             const json = res.json();
-//             dispatch(fetchDataSuccess(json));
-//             console.log(json);
-//             return json;
-//         } catch (error) {
-//             return dispatch(fetchDataFailure(error));
-//         }
-//     }
-// }
-
 function handleErrors(response) {
     if (!response.ok) {
         throw Error(response.statusText);
     }
     return response
 };
-
-
-
-
-
-
-
-
-
-// export const currentUser = {
-//     "id": 1,
-//     "firstName": "Joshua",
-//     "lastName": "Campos",
-//     "user_id": 1,
-//     "location": "USA",
-//     "user_profiles": [
-//         {
-//             "id": 1,
-//             "firstName": "Joshua",
-//             "lastName": "Campos",
-//             "location": "USA",
-//             "followers": [
-//                 {
-//                     "id": 3,
-//                     "profile_id": 2,
-//                     "following_id": 1,
-//                     "followers_profile": {
-//                         "firstName": "Lucas",
-//                         "lastName": "Campos"
-//                     }
-//                 },
-//                 {
-//                     "id": 4,
-//                     "profile_id": 3,
-//                     "following_id": 1,
-//                     "followers_profile": {
-//                         "firstName": "Shafeska",
-//                         "lastName": "Callimore"
-//                     }
-//                 }
-//             ],
-//             "posts": [
-//                 {
-//                     "id": 1,
-//                     "content": "How's everyone day going?",
-//                     "image": null,
-//                     "profile_id": 1,
-//                     "my_likes": [
-
-//                     ],
-//                     "my_dislikes": [
-
-//                     ],
-//                     "my_comments": [
-//                         {
-//                             "id": 1,
-//                             "firstName": "Lucas",
-//                             "lastName": "Campos",
-//                             "content": "My was great Joshua!",
-//                             "profile_id": 2,
-//                             "created_at": "2023-05-09T19:17:38.006Z"
-//                         },
-//                         {
-//                             "id": 2,
-//                             "firstName": "Shafeska",
-//                             "lastName": "Callimore",
-//                             "content": "It was awesome!",
-//                             "profile_id": 3,
-//                             "created_at": "2023-05-09T19:17:38.010Z"
-//                         }
-//                     ]
-//                 }
-//             ]
-//         },
-//         {
-//             "id": 2,
-//             "firstName": "Lucas",
-//             "lastName": "Campos",
-//             "location": "USA",
-//             "followers": [
-//                 {
-//                     "id": 1,
-//                     "profile_id": 1,
-//                     "following_id": 2,
-//                     "followers_profile": {
-//                         "firstName": "Joshua",
-//                         "lastName": "Campos"
-//                     }
-//                 }
-//             ],
-//             "posts": [
-//                 {
-//                     "id": 2,
-//                     "content": "Went on a walk today",
-//                     "image": null,
-//                     "profile_id": 2,
-//                     "my_likes": [
-
-//                     ],
-//                     "my_dislikes": [
-
-//                     ],
-//                     "my_comments": [
-//                         {
-//                             "id": 3,
-//                             "firstName": "Joshua",
-//                             "lastName": "Campos",
-//                             "content": "Nice, hope you enjoyed it!",
-//                             "profile_id": 1,
-//                             "created_at": "2023-05-09T19:17:38.013Z"
-//                         }
-//                     ]
-//                 }
-//             ]
-//         },
-//         {
-//             "id": 3,
-//             "firstName": "Shafeska",
-//             "lastName": "Callimore",
-//             "location": "CR",
-//             "followers": [
-//                 {
-//                     "id": 2,
-//                     "profile_id": 1,
-//                     "following_id": 3,
-//                     "followers_profile": {
-//                         "firstName": "Joshua",
-//                         "lastName": "Campos"
-//                     }
-//                 },
-//                 {
-//                     "id": 5,
-//                     "profile_id": 2,
-//                     "following_id": 3,
-//                     "followers_profile": {
-//                         "firstName": "Lucas",
-//                         "lastName": "Campos"
-//                     }
-//                 }
-//             ],
-//             "posts": [
-//                 {
-//                     "id": 3,
-//                     "content": "Went to Amsterdan last week",
-//                     "image": null,
-//                     "profile_id": 3,
-//                     "my_likes": [
-
-//                     ],
-//                     "my_dislikes": [
-
-//                     ],
-//                     "my_comments": [
-//                         {
-//                             "id": 4,
-//                             "firstName": "Joshua",
-//                             "lastName": "Campos",
-//                             "content": "how was it?",
-//                             "profile_id": 1,
-//                             "created_at": "2023-05-09T19:17:38.015Z"
-//                         }
-//                     ]
-//                 }
-//             ]
-//         },
-//         {
-//             "id": 4,
-//             "firstName": "Marko",
-//             "lastName": "Ramirez",
-//             "location": "Nevada",
-//             "followers": [
-
-//             ],
-//             "posts": [
-
-//             ]
-//         },
-//         {
-//             "id": 5,
-//             "firstName": "Buggie",
-//             "lastName": "Campos",
-//             "location": "NC",
-//             "followers": [
-
-//             ],
-//             "posts": [
-
-//             ]
-//         }
-//     ],
-//     "followers": [
-//         {
-//             "id": 3,
-//             "profile_id": 2,
-//             "following_id": 1,
-//             "followers_profiles": {
-//                 "firstName": "Lucas",
-//                 "lastName": "Campos"
-//             }
-//         },
-//         {
-//             "id": 4,
-//             "profile_id": 3,
-//             "following_id": 1,
-//             "followers_profiles": {
-//                 "firstName": "Shafeska",
-//                 "lastName": "Callimore"
-//             }
-//         }
-//     ],
-//     "posts": [
-//         {
-//             "id": 1,
-//             "profile_id": 1,
-//             "content": "How's everyone day going?",
-//             "image": null,
-//             "my_likes": [
-//                 {
-//                     "id": 1,
-//                     "profile_id": 2,
-//                     "post_id": 1,
-//                     "created_at": "2023-05-09T19:17:37.961Z",
-//                     "updated_at": "2023-05-09T19:17:37.961Z"
-//                 },
-//                 {
-//                     "id": 2,
-//                     "profile_id": 3,
-//                     "post_id": 1,
-//                     "created_at": "2023-05-09T19:17:37.964Z",
-//                     "updated_at": "2023-05-09T19:17:37.964Z"
-//                 }
-//             ],
-//             "my_dislikes": [
-
-//             ],
-//             "my_comments": [
-//                 {
-//                     "id": 1,
-//                     "firstName": "Lucas",
-//                     "lastName": "Campos",
-//                     "content": "My was great Joshua!",
-//                     "profile_id": 2,
-//                     "created_at": "2023-05-09T19:17:38.006Z"
-//                 },
-//                 {
-//                     "id": 2,
-//                     "firstName": "Shafeska",
-//                     "lastName": "Callimore",
-//                     "content": "It was awesome!",
-//                     "profile_id": 3,
-//                     "created_at": "2023-05-09T19:17:38.010Z"
-//                 }
-//             ]
-//         }
-//     ]
-// };
 
 const addPost = (state, action) => {
 
@@ -330,7 +31,8 @@ const addPost = (state, action) => {
         data: {
             ...state.data,
             posts: [{
-                id: state.data.posts.length === 0 ? 1 : state.data.posts[state.data.posts.length - 1].id + 1,
+                // id: state.data.posts.length === 0 ? 1 : state.data.posts[state.data.posts.length - 1].id + 1,
+                id: action.payload.id,
                 content: action.payload.content,
                 image: action.payload.image,
                 profile_id: state.data.id,
@@ -363,15 +65,15 @@ const addCommentToMyFP = (state, action) => {
                 return {
                     ...profile,
                     posts: profile.posts.map(post => {
-                        if (post.id === action.payload.id) {
+                        if (post.id === action.payload.post_id) {
                             return {
                                 ...post,
                                 my_comments: [...post.my_comments, {
-                                    id: post.my_comments.length === 0 ? 1 : post.my_comments[post.my_comments.length - 1].id + 1,
+                                    id: action.payload.id,
                                     firstName: state.data.firstName,
                                     lastName: state.data.lastName,
                                     profile_id: state.data.id,
-                                    post_id: action.payload.id,
+                                    post_id: action.payload.post_id,
                                     content: action.payload.content
                                 }]
                             }
@@ -394,17 +96,22 @@ const addCommentToMyPost = (state, action) => {
             ...state.data,
             posts: state.data.posts.map(post => {
 
-
-                return {
-                    ...post,
-                    my_comments: [...post.my_comments, {
-                        id: post.my_comments.length === 0 ? 1 : post.my_comments[post.my_comments.length - 1].id + 1,
-                        firstName: state.data.firstName,
-                        lastName: state.data.lastName,
-                        profile_id: state.data.id,
-                        post_id: action.payload.id,
-                        content: action.payload.content
-                    }]
+                if (post.id === action.payload.post_id) {
+                    return {
+                        ...post,
+                        my_comments: [...post.my_comments, {
+                            id: action.payload.post_id,
+                            firstName: state.data.firstName,
+                            lastName: state.data.lastName,
+                            profile_id: state.data.id,
+                            post_id: action.payload.post_id,
+                            content: action.payload.content
+                        }]
+                    }
+                } else {
+                    return {
+                        ...post
+                    }
                 }
             })
         }
@@ -625,15 +332,15 @@ const followProfile = (state, action) => {
         data: {
             ...state.data,
             user_profiles: state.data.user_profiles.map(user => {
-                if (user.id === action.payload.id) {
+                if (user.id === action.payload.following_id) {
 
 
                     return {
                         ...user,
                         followers: [...user.followers, {
-                            id: user.followers.length === 0 ? 1 : user.followers[user.followers.length - 1].id + 1,
+                            id: action.payload.id,
                             profile_id: state.data.id,
-                            following_id: action.payload.id,
+                            following_id: action.payload.following_id,
                             followers_profile: {
                                 firstName: state.data.firstName,
                                 lastName: state.data.lastName
@@ -662,7 +369,7 @@ const removeFollower = (state, action) => {
                 if (user.id === action.payload.id) {
                     return {
                         ...user,
-                        followers: user.followers.filter(follower => follower.profile_id !== state.id)
+                        followers: user.followers.filter(follower => follower.profile_id !== state.data.id)
                     }
                 } else {
                     return {
@@ -845,7 +552,8 @@ export const selectPosts = (state) => {
     // console.log(state.user_profiles.map(profile => profile.posts[0]))
 
 
-    const new_user_profiles_array = state.data.user_profiles?.filter(profile => profile.id !== state.data.id);
+    const new_user_profiles_array = state.data.user_profiles?.filter(profile => profile.id !== state.data.id).filter(profile =>
+        profile.followers.find(follower => follower.profile_id === state.data.id)?.profile_id === state.data.id);
 
 
     const user_profiles_posts = [];
@@ -858,6 +566,7 @@ export const selectPosts = (state) => {
                 id: post.id,
                 firstName: new_user_profiles_array[i].firstName,
                 lastName: new_user_profiles_array[i].lastName,
+                pImage: new_user_profiles_array[i].image,
                 image: post.image,
                 content: post.content,
                 my_comments: post.my_comments,
@@ -875,6 +584,7 @@ export const selectPosts = (state) => {
             id: element.id,
             firstName: state.data.firstName,
             lastName: state.data.lastName,
+            pImage: state.data.image,
             content: element.content,
             image: element.image,
             my_comments: element.my_comments,
@@ -886,7 +596,6 @@ export const selectPosts = (state) => {
 
     const merge = my_posts?.concat(user_profiles_posts);
 
-    console.log(merge)
 
     return merge;
 }
@@ -899,6 +608,8 @@ export const selectMyProfileInfo = state => {
         firstName: state.firstName,
         lastName: state.lastName,
         location: state.location,
+        user_id: state.user_id,
+        image: state.image,
         age: 21,
         posts: state.posts,
         followers: state.followers

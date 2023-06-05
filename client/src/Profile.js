@@ -19,7 +19,6 @@ export default function Profile() {
         setChangeView(v)
     }
 
-    console.log(profileInfo)
 
     const followers = profileInfo.followers.map(follower => {
 
@@ -32,13 +31,13 @@ export default function Profile() {
     })
 
     return (
-        <Container>
+        <Container >
 
             <Container className="header border border-3">
                 <h1 className="text-center">{`${profileInfo.firstName} ${profileInfo.lastName}`}</h1>
 
                 <Container className="d-flex justify-content-center">
-                    <div className="circle" style={{ backgroundImage: `url(${profilePic})` }}></div>
+                    <div className="circle" style={{ backgroundImage: `url(${profileInfo.image})` }}></div>
                 </Container>
                 <h3>Location: {profileInfo.location}</h3>
                 <h3>Age: {profileInfo.age}</h3>
@@ -51,9 +50,9 @@ export default function Profile() {
                     <Col style={{ backgroundColor: "lightGreen" }}>
                         <h2 id="profileButtons" onClick={() => changeV("posts")}>My Posts {`(${profileInfo.posts.length})`} </h2>
                     </Col>
-                    <Col style={{ backgroundColor: "lightGreen" }}>
+                    {/* <Col style={{ backgroundColor: "lightGreen" }}>
                         <h2 id="profileButtons" onClick={() => changeV("photos")}>My Photos (10) </h2>
-                    </Col>
+                    </Col> */}
 
                     <Col style={{ backgroundColor: "lightGreen" }}>
                         <h2 id="profileButtons" onClick={() => changeV("friends")}>My Followers {`(${profileInfo.followers.length})`} </h2>
@@ -68,7 +67,7 @@ export default function Profile() {
                 <Row className="Prow">
 
                     {changeView === "posts" ? <Posts profileInfo={profileInfo} /> : null}
-                    {changeView === "photos" ? "photos" : null}
+                    {/* {changeView === "photos" ? "photos" : null} */}
                     {changeView === "friends" ? <Friends profileInfo={profileInfo} followers={followers} /> : null}
 
                 </Row>

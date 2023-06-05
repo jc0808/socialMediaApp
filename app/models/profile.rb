@@ -9,7 +9,7 @@ class Profile < ApplicationRecord
 
     
     has_many :messages, :class_name => 'Message', :foreign_key => 'receiver_id'
-    has_many :chats, through: :messages
+    has_many :chats
 
     validates :firstName, :lastName, :location, presence: true
 
@@ -63,6 +63,7 @@ class Profile < ApplicationRecord
             firstName: profile.firstName,
             lastName: profile.lastName,
             location: profile.location,
+            image: profile.image,
             followers: profile.followers.map{|follower| {
                 id: follower.id,
                 profile_id: follower.profile_id,

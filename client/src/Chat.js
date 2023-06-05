@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 import Messages from "./Messages";
 import { useSelector } from "react-redux";
-import { selectCurrentUserID } from "./Store";
+import { selectCurrentUserID, selectUserProfiles } from "./Store";
 import Input from "./Input";
 
 
 
-export default function Chat({ id, messages, goBack, ws, newMessage, receiver }) {
+export default function Chat({ id, messages, goBack, receiver }) {
 
 
     const currentUserId = useSelector(selectCurrentUserID);
@@ -14,9 +14,13 @@ export default function Chat({ id, messages, goBack, ws, newMessage, receiver })
     const [chatMessages, setChatMessages] = useState([]);
     // const [chatId, setChatId] = useState(null)
 
-    const [guid, setGuid] = useState("");
+    // const [guid, setGuid] = useState("");
 
     const mContainer = document.getElementById("messagesContainer");
+
+    const profiles = useSelector(selectUserProfiles);
+
+    const receiverProfile = profiles.filter(profile => profile.id === receiver)[0];
 
     // Math.random().toString(36).substring(2, 15)
 
@@ -59,7 +63,7 @@ export default function Chat({ id, messages, goBack, ws, newMessage, receiver })
 
 
     const postMessage = (message) => {
-        setChatMessages(message)
+        setChatMessages([...chatMessages, message])
         // mContainer.scrollTop = mContainer.scrollHeight;
         resetScroll();
     }
@@ -89,7 +93,6 @@ export default function Chat({ id, messages, goBack, ws, newMessage, receiver })
 
 
         const newM = {
-            id: chatMessages.length === 0 ? 1 : chatMessages[chatMessages.length - 1].id + 1,
             chat_id: id,
             profile_id: currentUserId,
             receiver_id: receiver,
@@ -101,22 +104,10 @@ export default function Chat({ id, messages, goBack, ws, newMessage, receiver })
             headers: {
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify({
-                profile_id: newM.profile_id,
-                receiver_id: newM.receiver_id,
-                chat_id: newM.chat_id,
-                content: newM.content
-            })
+            body: JSON.stringify(newM)
         })
-        // .then(postMessage(newMessage))
-        // setMessages([...messages, newMessage])
-
-        // if (newMessage === "" || newMessage === undefined) {
-        //     return
-        // } else {
-        // postMessage(newM)
-        //     console.log(newMessage)
-        // }
+            .then(res => res.json())
+            .then(m => postMessage(m))
     }
 
 
@@ -130,17 +121,15 @@ export default function Chat({ id, messages, goBack, ws, newMessage, receiver })
         goBack();
     }
 
-    // console.log(chatMessages)
-
 
     return (
         <div className="chat">
 
             <div className="chatInfo">
                 <button onClick={handleGoBack}>Back</button>
-                <span>Mark</span>
+                <span>{receiverProfile.firstName}</span>
                 <div className="chatIcons">
-                    <h3>profile</h3>
+                    {/* <h3>profile</h3> */}
                 </div>
             </div>
 

@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { Container, Row } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
-import { selectMyProfileInfo } from "./Store";
+import { selectCurrentUserID, selectMyProfileInfo } from "./Store";
 
 export default function Account() {
 
     const myProfileInfo = useSelector(selectMyProfileInfo);
+    const currentUserId = useSelector(selectCurrentUserID);
 
     const [currentView, setCurrentView] = useState(0);
     const [firstName, setFirstName] = useState(myProfileInfo.firstName);
@@ -17,6 +18,7 @@ export default function Account() {
     const [messageSuccessfull, setMessageSuccesfull] = useState(false);
     const [change, setChange] = useState(true);
     const dispatch = useDispatch();
+
 
     function changeView(view) {
         setCurrentView(view);
@@ -38,9 +40,25 @@ export default function Account() {
 
         e.preventDefault();
         if (password === confirmPassword && password !== null && confirmPassword !== null) {
-            setChange(false);
-            setMessageSuccesfull(true);
-            setChange((change) => !change)
+
+            fetch(`/users/${myProfileInfo.user_id}`, {
+                method: "PATCH",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    password: password
+                })
+            })
+
+                .then(() => {
+                    setChange(false);
+                    setMessageSuccesfull(true);
+                    setChange((change) => !change)
+                    setPassword(null)
+                    setConfirmPassword(null)
+                    setShowError(false)
+                })
         } else {
             setShowError(true);
             setMessageSuccesfull(null);
@@ -58,16 +76,36 @@ export default function Account() {
     const handleChangeInfo = e => {
         e.preventDefault()
 
-        const changeInfo = {
-            type: 'updateMyProfileInfo',
-            payload: {
+        setChange((change) => !change)
+
+
+        fetch(`/profiles/${currentUserId}`, {
+            method: "PATCH",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
                 firstName: firstName,
                 lastName: lastName,
                 location: location
-            }
-        };
+            })
+        })
 
-        dispatch(changeInfo);
+            .then(res => res.json())
+            .then(profile => {
+                const changeInfo = {
+                    type: 'updateMyProfileInfo',
+                    payload: {
+                        firstName: profile.firstName,
+                        lastName: profile.lastName,
+                        location: profile.location
+                    }
+                };
+
+                dispatch(changeInfo);
+            })
+
+
     }
     function cancel() {
         setPassword(null)
@@ -113,7 +151,7 @@ export default function Account() {
                                     <label>Location</label>
                                     <input type="text" onChange={changeLocation} placeholder={location} />
 
-                                    <button onClick={() => setChange((change) => !change)}>Done</button>
+                                    <button type="submit" >Done</button>
                                 </form>
                             </div>}
 
@@ -159,10 +197,10 @@ export default function Account() {
                                     <label>Confirm Password</label>
                                     <input type="password" onChange={handleConfirmP} />
 
-                                    <button>Change your Password</button>
+                                    <button >Change your Password</button>
                                 </form>
 
-                                <button className="cancelB" onClick={() => setChange((change) => !change)}>Cancel</button>
+                                <button className="cancelB" onClick={() => { setChange((change) => !change); setShowError(false) }}>Cancel</button>
 
 
 

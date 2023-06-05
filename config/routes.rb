@@ -6,13 +6,13 @@ Rails.application.routes.draw do
 
   resources :messages
   resources :chats
-  # resources :comments
-  # resources :dislikes
-  resources :posts, only: [:index]
-  # resources :likes
-  # resources :followers, only: [:index]
-  resources :profiles, only: [:index, :show]
-  resources :users, only: [:create]
+  resources :comments, only: [:create]
+  resources :dislikes, only: [:create, :destroy]
+  resources :posts, only: [:index, :create]
+  resources :likes, only: [:create, :destroy]
+  resources :followers, only: [:create, :destroy]
+  resources :profiles, only: [:index, :show, :update]
+  resources :users, only: [:create, :update]
   get "/profileFPosts/:id", to: 'profile_followers_posts#show'
   get "/auth", to: "authentications#show"
   post "/login", to: "sessions#create"

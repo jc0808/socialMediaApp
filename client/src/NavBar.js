@@ -1,4 +1,4 @@
-import { Container, Navbar, Button, Form, Nav, NavDropdown, Dropdown } from "react-bootstrap";
+import { Container, Navbar, Form, Nav, NavDropdown, Dropdown } from "react-bootstrap";
 import { useSelector } from "react-redux";
 import { selectMyProfileInfo } from "./Store";
 import ProfileCard from "./ProfileCard";
@@ -39,7 +39,7 @@ export default function NavBar({ profiles, profileView, logOut }) {
 
     return (
         <div>
-            <Navbar bg="light" expand="lg">
+            <Navbar bg="light" expand="lg" >
                 <Container fluid>
                     <Navbar.Brand href="#">JC Media</Navbar.Brand>
                     <Navbar.Toggle aria-controls="navbarScroll" />
