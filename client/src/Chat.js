@@ -10,7 +10,7 @@ import ActionCable from "actioncable";
 
 
 
-export default function Chat({ id, messages, goBack, receiver, newMessageReceived }) {
+export default function Chat({ id, messages, goBack, receiver }) {
 
 
     const currentUserId = useSelector(selectCurrentUserID);
@@ -67,22 +67,22 @@ export default function Chat({ id, messages, goBack, receiver, newMessageReceive
 
 
 
-    useEffect(() => {
-        if (newMessageReceived) {
-            // setChats(chats => chats.map(chat => {
-            //     if (chat.id === newMessageReceived.chat_id) {
-            //         return {
-            //             ...chat,
-            //             messages: [...chat.messages, newMessageReceived]
-            //         }
-            //     } else {
-            //         return chat
-            //     }
-            // }))
+    // useEffect(() => {
+    //     if (newMessageReceived) {
+    //         // setChats(chats => chats.map(chat => {
+    //         //     if (chat.id === newMessageReceived.chat_id) {
+    //         //         return {
+    //         //             ...chat,
+    //         //             messages: [...chat.messages, newMessageReceived]
+    //         //         }
+    //         //     } else {
+    //         //         return chat
+    //         //     }
+    //         // }))
 
-            postMessage(newMessageReceived)
-        }
-    }, [newMessageReceived])
+    //         postMessage(newMessageReceived)
+    //     }
+    // }, [newMessageReceived])
 
 
 
@@ -172,8 +172,8 @@ export default function Chat({ id, messages, goBack, receiver, newMessageReceive
             },
             body: JSON.stringify(newM)
         })
-        // .then(res => res.json())
-        // .then(m => postMessage(m))
+            .then(res => res.json())
+            .then(m => postMessage(m))
 
 
 
