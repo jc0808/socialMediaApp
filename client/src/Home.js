@@ -14,7 +14,7 @@ import { useDispatch, useSelector } from "react-redux";
 
 
 
-export default function Home({ profiles }) {
+export default function Home({ profiles, newMessageReceived, newChatReceived }) {
 
     const [post, setPost] = useState(false);
     // const [allPosts, setAllPosts] = useState(useSelector(selectPosts));
@@ -92,7 +92,7 @@ export default function Home({ profiles }) {
     // }, [])
 
 
-
+    console.log(chats)
 
 
     useEffect(() => {
@@ -108,7 +108,28 @@ export default function Home({ profiles }) {
 
     }, [])
 
-    console.log(chats)
+    useEffect(() => {
+        if (newChatReceived) {
+            // setChats(chats => chats.map(chat => {
+            //     if (chat.id === newMessageReceived.chat_id) {
+            //         return {
+            //             ...chat,
+            //             messages: [...chat.messages, newMessageReceived]
+            //         }
+            //     } else {
+            //         return chat
+            //     }
+            // }))
+
+            if (newChatReceived.profile_id === currentUserId) {
+                setChats([...chats, newChatReceived]);
+            }
+        }
+    }, [newChatReceived])
+
+    // console.log(newMessageReceived)
+
+
 
 
     function createPost() {
@@ -193,11 +214,11 @@ export default function Home({ profiles }) {
         setSearchTerm(e.target.value);
     }
 
-    console.log(chats)
+
 
 
     const handleCreateChat = (id) => {
-        console.log(id)
+
 
         const findChat = chats.find(chat => {
             if (chat.profile_id === id) {
@@ -220,8 +241,8 @@ export default function Home({ profiles }) {
                     "profile_two_id": id
                 })
             })
-                .then(res => res.json())
-                .then(newChat => setChats(chats => [...chats, newChat]))
+                // .then(res => res.json())
+                // .then(newChat => setChats(chats => [...chats, newChat]))
                 .then(setOpenSearchNewChat(false))
         } else {
             setChatErrorMessage("You already have a chat with this person")
@@ -381,7 +402,7 @@ export default function Home({ profiles }) {
                             </div>
                                 :
                                 <div className="mt-5">
-                                    <Chat id={chat.id} messages={chat.messages} goBack={goBack} receiver={chat.receiver} />
+                                    <Chat id={chat.id} messages={chat.messages} goBack={goBack} receiver={chat.receiver} newMessageReceived={newMessageReceived} />
                                 </div>
                             }
 

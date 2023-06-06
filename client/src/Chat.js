@@ -4,9 +4,13 @@ import { useSelector } from "react-redux";
 import { selectCurrentUserID, selectUserProfiles } from "./Store";
 import Input from "./Input";
 
+import ActionCable from "actioncable";
 
 
-export default function Chat({ id, messages, goBack, receiver }) {
+
+
+
+export default function Chat({ id, messages, goBack, receiver, newMessageReceived }) {
 
 
     const currentUserId = useSelector(selectCurrentUserID);
@@ -23,6 +27,62 @@ export default function Chat({ id, messages, goBack, receiver }) {
     const receiverProfile = profiles.filter(profile => profile.id === receiver)[0];
 
     // Math.random().toString(36).substring(2, 15)
+
+    // const cable = ActionCable.createConsumer("ws://localhost:3000/cable");
+
+
+
+
+    // useEffect(() => {
+    //     const cable = Cable.createConsumer('ws://localhost:3000/cable');
+
+    //     const subscription = cable.subscription.create({
+    //         channel: "MessagesChannel",
+    //     }, {
+    //         connected: () => { console.log("ws connected") },
+    //         disconnected: () => { console.log("ws disconected") },
+    //         received: data => {
+    //             console.log(data)
+    //         }
+    //     })
+
+    //     subscription()
+    // })
+
+    // const createSubscription = () => {
+    //     cable.subscriptions.create(
+    //         { channel: "MessagesChannel" },
+    //         { received: (message) => handleReceivedMessage(message) }
+    //     );
+    // };
+
+    // const handleReceivedMessage = (message) => {
+    //     postMessage(message)
+    // };
+
+
+    // useEffect(() => {
+    //     createSubscription();
+    // }, [])
+
+
+
+    useEffect(() => {
+        if (newMessageReceived) {
+            // setChats(chats => chats.map(chat => {
+            //     if (chat.id === newMessageReceived.chat_id) {
+            //         return {
+            //             ...chat,
+            //             messages: [...chat.messages, newMessageReceived]
+            //         }
+            //     } else {
+            //         return chat
+            //     }
+            // }))
+
+            postMessage(newMessageReceived)
+        }
+    }, [newMessageReceived])
 
 
 
@@ -88,6 +148,12 @@ export default function Chat({ id, messages, goBack, receiver }) {
 
     // console.log(messages)
 
+
+    const onReceivedMessage = res => {
+        console.log(res)
+        postMessage(res.message)
+    }
+
     const sendMessage = (message) => {
 
 
@@ -106,9 +172,17 @@ export default function Chat({ id, messages, goBack, receiver }) {
             },
             body: JSON.stringify(newM)
         })
-            .then(res => res.json())
-            .then(m => postMessage(m))
+        // .then(res => res.json())
+        // .then(m => postMessage(m))
+
+
+
+
+
+
+
     }
+
 
 
 
@@ -134,6 +208,8 @@ export default function Chat({ id, messages, goBack, receiver }) {
             </div>
 
             <div id="messagesContainer">
+
+
                 {displayMessages}
             </div>
             {/* <Messages /> */}

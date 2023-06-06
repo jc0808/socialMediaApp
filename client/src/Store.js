@@ -45,6 +45,32 @@ const addPost = (state, action) => {
 }
 
 
+const addPostToFP = (state, action) => {
+    return {
+        ...state,
+        data: {
+            ...state.data,
+            user_profiles: state.data.user_profiles.map(profile => {
+                if (profile.id === action.payload.profile_id) {
+                    return {
+                        ...profile,
+                        posts: [{
+                            id: action.payload.id,
+                            content: action.payload.content,
+                            image: action.payload.image,
+                            profile_id: action.payload.profile_id,
+                            my_likes: action.payload.my_likes,
+                            my_dislikes: action.payload.my_dislikes,
+                            my_comments: action.payload.my_comments
+                        }, ...profile.posts]
+                    }
+                }
+            })
+        }
+    }
+}
+
+
 const removePost = (state, action) => {
     return {
         ...state,
@@ -480,6 +506,9 @@ function profileReducer(state = initialState, action) {
 
         case 'updateMyProfileInfo':
             return updateMyProfileInfo(state, action);
+
+        case 'addPostToFP':
+            return addPostToFP(state, action);
 
         default:
             return state;

@@ -12,8 +12,11 @@ import { store } from './Store';
 
 
 
+
+
 ReactDOM.render(
   <BrowserRouter>
+
     <Provider store={store}>
 
       <App />
